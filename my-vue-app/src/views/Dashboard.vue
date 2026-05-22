@@ -10,24 +10,24 @@
         <a href="#">🍕 Foods</a>
         <a href="#">🛒 Orders</a>
         <a href="#">❤️ Favorites</a>
-         <button class="checkout-btn" @click="goToCheckout">
-  Go to Checkout 💳
-</button>
         <a href="#">⚙️ Settings</a>
       </nav>
 
       <button class="logout" @click="logout">
         Logout
       </button>
-     
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <main class="main">
 
       <!-- TOP BAR -->
       <header class="topbar">
-        <input type="text" placeholder="Search food..." />
+        <input
+          type="text"
+          placeholder="Search food..."
+        />
+
         <div class="user">
           👤 {{ user }}
         </div>
@@ -39,11 +39,16 @@
         <p>Order your favorite meals anytime</p>
       </section>
 
-      <!-- DASHBOARD BODY: Side-by-Side Content -->
+      <!-- BODY -->
       <div class="dashboard-body">
-        <!-- FOOD CARDS -->
+
+        <!-- FOODS -->
         <section class="grid">
-          <div class="card" v-for="food in foods" :key="food.id">
+          <div
+            class="card"
+            v-for="food in foods"
+            :key="food.id"
+          >
             <h3>{{ food.name }}</h3>
             <p>${{ food.price }}</p>
 
@@ -53,16 +58,38 @@
           </div>
         </section>
 
-        <!-- CART BOX -->
+        <!-- CART -->
         <section class="cart-box">
+
           <h3>🛒 Cart ({{ cartCount }})</h3>
-          <p v-if="cart.length === 0" class="empty-cart">Your cart is empty</p>
+
+          <p
+            v-if="cart.length === 0"
+            class="empty-cart"
+          >
+            Your cart is empty
+          </p>
+
           <ul v-else>
-            <li v-for="(item, index) in cart" :key="index">
-              {{ item.name }} - ${{ item.price }}
+            <li
+              v-for="(item,index) in cart"
+              :key="index"
+            >
+              {{ item.name }}
+              <span>${{ item.price }}</span>
             </li>
           </ul>
+
+          <button
+            v-if="cart.length > 0"
+            class="checkout-btn"
+            @click="goToCheckout"
+          >
+            Proceed to Checkout 💳
+          </button>
+
         </section>
+
       </div>
 
     </main>
@@ -70,68 +97,92 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue" // 👈 Fixed: Added watch here!
+import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router"
 
-// Router setup (Make sure vue-router is installed in your project!)
 const router = useRouter()
-const user = ref(localStorage.getItem("user") || "Guest")
+
+const user = ref(
+  localStorage.getItem("user") || "Guest"
+)
 
 function logout() {
   localStorage.removeItem("user")
-  // Safe fallback if router isn't fully configured yet
-  if (router) {
-    router.push("/login")
-  } 
-  
-  
-  else if (router){
-    router.push("/checkout")
-  }
+  router.push("/login")
 }
 
 const foods = [
-  { id: 1, name: "🍔 Burger", price: 5.99 },
-  { id: 2, name: "🍕 Pizza", price: 8.99 },
-  { id: 3, name: "🍜 Noodles", price: 4.99 },
-  { id: 4, name: "🥗 Salad", price: 3.99 }
+  {
+    id: 1,
+    name: "🍔 Burger",
+    price: 5.99
+  },
+  {
+    id: 2,
+    name: "🍕 Pizza",
+    price: 8.99
+  },
+  {
+    id: 3,
+    name: "🍜 Noodles",
+    price: 4.99
+  },
+  {
+    id: 4,
+    name: "🥗 Salad",
+    price: 3.99
+  }
 ]
 
-// Bonus Tip: Initialize cart from localStorage so items stay when refreshing!
-const cart = ref(JSON.竞争力 || JSON.parse(localStorage.getItem("cart")) || [])
+const cart = ref(
+  JSON.parse(
+    localStorage.getItem("cart") || "[]"
+  )
+)
 
 function addToCart(food) {
   cart.value.push(food)
 }
 
-const cartCount = computed(() => cart.value.length)
+const cartCount = computed(() => {
+  return cart.value.length
+})
 
 function goToCheckout() {
-  if (router) {
-    router.push("/checkout")
-  } else {
-    window.location.href = "/checkout"
-  }
+  router.push("/checkout")
 }
 
-watch(cart, () => {
-  localStorage.setItem("cart", JSON.stringify(cart.value))
-}, { deep: true })
+watch(
+  cart,
+  () => {
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(cart.value)
+    )
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped>
-/* Keeping all your original styles, plus adding layout optimization */
+* {
+  box-sizing: border-box;
+}
+
 .app {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   font-family: Arial, sans-serif;
 }
 
+/* SIDEBAR */
+
 .sidebar {
-  width: 220px;
+  width: 230px;
   background: #111827;
   color: white;
   padding: 20px;
+
   display: flex;
   flex-direction: column;
 }
@@ -143,118 +194,197 @@ watch(cart, () => {
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
 .sidebar a {
-  color: #ccc;
   text-decoration: none;
-  padding: 8px;
-  border-radius: 6px;
+  color: #d1d5db;
+  padding: 10px;
+  border-radius: 8px;
 }
 
-.sidebar a.active,
-.sidebar a:hover {
+.sidebar a:hover,
+.sidebar .active {
   background: #374151;
   color: white;
 }
 
 .logout {
   margin-top: auto;
+  padding: 12px;
+
+  border: none;
+  border-radius: 8px;
+
   background: #ef4444;
   color: white;
-  border: none;
-  padding: 10px;
+
   cursor: pointer;
-  border-radius: 6px;
 }
+
+/* MAIN */
 
 .main {
   flex: 1;
-  padding: 20px;
   background: #f3f4f6;
-  overflow-y: auto;
+  padding: 20px;
 }
+
+/* TOPBAR */
 
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   margin-bottom: 20px;
 }
 
 .topbar input {
   width: 60%;
   padding: 10px;
+
   border-radius: 8px;
   border: 1px solid #ddd;
 }
 
+.user {
+  font-weight: bold;
+}
+
+/* HERO */
+
 .hero {
-  background: linear-gradient(90deg, #ff6b6b, #feca57);
-  padding: 20px;
-  border-radius: 10px;
+  padding: 25px;
+  border-radius: 12px;
+
   color: white;
+
+  background: linear-gradient(
+    90deg,
+    #ff6b6b,
+    #feca57
+  );
+
   margin-bottom: 20px;
 }
 
-/* Flex layout to align menu and cart beautifully */
+/* BODY */
+
 .dashboard-body {
   display: flex;
   gap: 20px;
-  align-items: flex-start;
 }
+
+/* FOOD GRID */
 
 .grid {
   flex: 2;
+
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns:
+    repeat(2, 1fr);
+
   gap: 15px;
 }
 
 .card {
   background: white;
-  padding: 15px;
-  border-radius: 10px;
+  padding: 20px;
+
+  border-radius: 12px;
+
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.08);
 }
 
 .card button {
   margin-top: 10px;
-  padding: 8px 15px;
+
+  padding: 10px 15px;
+
   border: none;
+  border-radius: 8px;
+
   background: #22c55e;
   color: white;
+
   cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.2s;
 }
 
 .card button:hover {
   background: #16a34a;
 }
 
+/* CART */
+
 .cart-box {
   flex: 1;
+
   background: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  padding: 20px;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.08);
 }
 
 .cart-box ul {
-  padding-left: 20px;
-  margin-top: 10px;
+  list-style: none;
+  padding: 0;
+
+  margin-top: 15px;
 }
 
 .cart-box li {
-  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid #eee;
 }
 
 .empty-cart {
-  color: #888;
-  font-style: italic;
+  color: gray;
   margin-top: 10px;
+}
+
+/* CHECKOUT BUTTON */
+
+.checkout-btn {
+  width: 100%;
+
+  margin-top: 20px;
+  padding: 14px;
+
+  border: none;
+  border-radius: 10px;
+
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    #ff6b6b,
+    #ff9f43
+  );
+
+  transition: 0.3s;
+}
+
+.checkout-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px
+    rgba(255,107,107,.3);
 }
 </style>
