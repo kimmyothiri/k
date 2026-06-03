@@ -39,10 +39,10 @@
         <div class="icon twitter">X</div>
       </div>
 
-      <p class="register">
-        Don't have an account?
-        <a href="#">Register</a>
-      </p>
+ <div class="footer">
+  Don't have an account? 
+  <router-link to="/register">Register here</router-link>
+</div>
     </div>
   </div>
 </template>

@@ -4,6 +4,7 @@ import Login from "../views/Login.vue"
 import Dashboard from "../views/Dashboard.vue"
 import Checkout from "../views/Checkout.vue"
 import Orders from "../views/Orders.vue"
+import Register from "../views/Register.vue"
 
 const routes = [
   { path: "/", redirect: "/login" },
@@ -14,7 +15,9 @@ const routes = [
 
   { path: "/checkout", component: Checkout },
 
-  { path: "/orders", component: Orders }
+  { path: "/orders", component: Orders },
+
+  { path: "/register",component: Register}
 ]
 
 const router = createRouter({
